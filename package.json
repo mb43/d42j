@@ -1,0 +1,13 @@
+{
+  "name": "d42j-dashboard",
+  "version": "1.0.0",
+  "description": "Executive IT Dashboard for Jira Service Management and Device42",
+  "main": "index.html",
+  "scripts": {
+    "serve": "python3 -m http.server 8000",
+    "dev": "python3 -m http.server 8000"
+  },
+  "keywords": ["dashboard", "jira", "device42", "itsm"],
+  "author": "",
+  "license": "MIT"
+}
