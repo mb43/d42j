@@ -1,0 +1,54 @@
+{
+  "device42": {
+    "host": "rhmd42",
+    "protocol": "https",
+    "port": 443,
+    "username": "your_d42_username",
+    "password": "your_d42_password",
+    "verify_ssl": true
+  },
+  "jira": {
+    "host": "https://jira.yourcompany.com",
+    "username": "your_jira_username",
+    "api_token": "your_jira_api_token",
+    "project_key": "IT"
+  },
+  "risk_assessment": {
+    "max_age_years": 7,
+    "age_thresholds": {
+      "low": 3,
+      "medium": 5,
+      "high": 7
+    },
+    "failure_rate_model": "bathtub_curve",
+    "weight_factors": {
+      "age": 0.4,
+      "support_status": 0.3,
+      "incident_history": 0.2,
+      "manufacturer_eol": 0.1
+    }
+  },
+  "manufacturers": {
+    "dell": {
+      "enabled": true,
+      "api_key": ""
+    },
+    "hp": {
+      "enabled": true,
+      "api_key": ""
+    },
+    "cisco": {
+      "enabled": true,
+      "api_key": ""
+    }
+  },
+  "cache": {
+    "enabled": true,
+    "ttl_hours": 6
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "cors_origins": ["http://localhost:3000", "https://yourusername.github.io"]
+  }
+}

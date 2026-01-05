@@ -1,0 +1,16 @@
+[Unit]
+Description=d42j Infrastructure Risk Management API
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/d42j/backend
+Environment="PATH=/opt/d42j/backend/venv/bin"
+ExecStart=/opt/d42j/backend/venv/bin/python main.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
