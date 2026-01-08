@@ -1,0 +1,26 @@
+# Minimal requirements for Windows without build tools
+# Core API
+fastapi==0.104.1
+uvicorn==0.24.0
+
+# HTTP and API clients
+requests==2.31.0
+jira==3.5.2
+
+# Data validation
+pydantic==2.5.0
+
+# Utilities
+python-dateutil==2.8.2
+cachetools==5.3.2
+
+# Configuration
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# Security - if this fails, see note below
+cryptography==41.0.7
+
+# NOTES:
+# If cryptography fails, try: pip install cryptography --only-binary cryptography
+# If that fails, use a simpler encryption library or store config unencrypted (dev only!)
