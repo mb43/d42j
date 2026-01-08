@@ -4,7 +4,11 @@ Data models for infrastructure assets.
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+try:
+    from pydantic import Field
+except ImportError:
+    Field = None  # pydantic v1 compatibility
 
 
 class AssetType(str, Enum):
@@ -56,7 +60,7 @@ class Asset(BaseModel):
     # Risk assessment fields
     risk_score: float = 0.0
     risk_level: RiskLevel = RiskLevel.LOW
-    risk_factors: Dict[str, Any] = Field(default_factory=dict)
+    risk_factors: Dict[str, Any] = {}
 
     # Support and lifecycle
     support_status: SupportStatus = SupportStatus.UNKNOWN
@@ -75,9 +79,20 @@ class Asset(BaseModel):
     device42_url: Optional[str] = None
 
     # Additional metadata
-    tags: List[str] = Field(default_factory=list)
-    custom_fields: Dict[str, Any] = Field(default_factory=dict)
-    last_updated: datetime = Field(default_factory=datetime.utcnow)
+    tags: List[str] = []
+    custom_fields: Dict[str, Any] = {}
+    last_updated: datetime = None
+
+    def __init__(self, **data):
+        if 'last_updated' not in data or data['last_updated'] is None:
+            data['last_updated'] = datetime.utcnow()
+        if 'risk_factors' not in data:
+            data['risk_factors'] = {}
+        if 'tags' not in data:
+            data['tags'] = []
+        if 'custom_fields' not in data:
+            data['custom_fields'] = {}
+        super().__init__(**data)
 
 
 class NetworkDevice(Asset):
@@ -115,7 +130,12 @@ class RiskAssessment(BaseModel):
     risk_level: RiskLevel
     factors: Dict[str, float]
     recommendations: List[str]
-    assessed_at: datetime = Field(default_factory=datetime.utcnow)
+    assessed_at: datetime = None
+
+    def __init__(self, **data):
+        if 'assessed_at' not in data or data['assessed_at'] is None:
+            data['assessed_at'] = datetime.utcnow()
+        super().__init__(**data)
 
 
 class AssetSummary(BaseModel):
