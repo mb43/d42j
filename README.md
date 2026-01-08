@@ -35,6 +35,18 @@ A comprehensive infrastructure management platform that integrates Device42 CMDB
 
 ## Quick Start
 
+### 🪟 Windows Users (ZScaler/VPN Required)
+
+**If you need ZScaler or VPN to access Device42/Jira**, see the complete Windows installation guide:
+
+📘 **[INSTALL_WINDOWS.md](INSTALL_WINDOWS.md)** - Complete step-by-step guide from scratch
+
+Or use these quick-start scripts after getting the code:
+- `start-all.bat` - Start both backend and frontend
+- `backend/setup-windows.bat` - First-time setup
+
+### 🐧 Linux/Mac Users
+
 ### Prerequisites
 
 - Python 3.9+
