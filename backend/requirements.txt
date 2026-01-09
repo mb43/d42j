@@ -3,13 +3,13 @@ uvicorn==0.23.0
 requests==2.31.0
 pydantic==1.10.13
 python-dotenv==1.0.0
-cryptography==41.0.7
 jira==3.5.2
 python-dateutil==2.8.2
 cachetools==5.3.2
 pyyaml==6.0.1
 
-# Optional dependencies - install separately if needed:
-# pandas - requires Visual Studio Build Tools
-# aiohttp - for async operations
-# openpyxl - for Excel export
+# Removed for Windows compatibility:
+# cryptography - requires build tools
+# pandas - requires build tools
+# aiohttp - optional async support
+# openpyxl - optional Excel export
