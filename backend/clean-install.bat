@@ -10,7 +10,7 @@ echo This will:
 echo 1. Delete virtual environment
 echo 2. Clear Python cache files
 echo 3. Create fresh virtual environment
-echo 4. Install dependencies from scratch
+echo 4. Install dependencies from requirements.txt
 echo.
 echo Press Ctrl+C to cancel, or
 pause
@@ -66,68 +66,51 @@ python -m pip install --upgrade pip --no-cache-dir
 
 echo.
 echo ========================================
-echo Step 5: Installing dependencies...
+echo Step 5: Installing dependencies from requirements.txt...
 echo ========================================
 
-REM Install one by one to see which fails
-echo Installing fastapi...
-pip install --no-cache-dir fastapi==0.103.0
-if errorlevel 1 goto install_failed
+pip install --no-cache-dir -r requirements.txt
 
-echo Installing uvicorn...
-pip install --no-cache-dir uvicorn==0.23.0
-if errorlevel 1 goto install_failed
-
-echo Installing requests...
-pip install --no-cache-dir requests==2.31.0
-if errorlevel 1 goto install_failed
-
-echo Installing pydantic...
-pip install --no-cache-dir pydantic==1.10.13
-if errorlevel 1 goto install_failed
-
-echo Installing python-dotenv...
-pip install --no-cache-dir python-dotenv==1.0.0
-if errorlevel 1 goto install_failed
-
-echo Installing cryptography...
-pip install --no-cache-dir cryptography==41.0.7
 if errorlevel 1 (
-    echo WARNING: cryptography failed, trying binary-only...
-    pip install --no-cache-dir --only-binary cryptography cryptography==41.0.7
-    if errorlevel 1 goto install_failed
+    echo.
+    echo ========================================
+    echo ERROR: Installation failed!
+    echo ========================================
+    echo.
+    echo Try these solutions:
+    echo 1. Run: ..\fix-zscaler.bat (if using ZScaler)
+    echo 2. Disable antivirus temporarily
+    echo 3. Run Command Prompt as Administrator
+    echo.
+    pause
+    exit /b 1
 )
-
-echo Installing jira...
-pip install --no-cache-dir jira==3.5.2
-if errorlevel 1 goto install_failed
-
-echo Installing python-dateutil...
-pip install --no-cache-dir python-dateutil==2.8.2
-if errorlevel 1 goto install_failed
-
-echo Installing cachetools...
-pip install --no-cache-dir cachetools==5.3.2
-if errorlevel 1 goto install_failed
-
-echo Installing pyyaml...
-pip install --no-cache-dir pyyaml==6.0.1
-if errorlevel 1 goto install_failed
 
 echo.
 echo ========================================
 echo Step 6: Verifying installation...
 echo ========================================
 
-python -c "import fastapi; print('fastapi OK')"
+python -c "import fastapi; print('fastapi version:', fastapi.__version__)"
 python -c "import uvicorn; print('uvicorn OK')"
 python -c "import pydantic; print('pydantic version:', pydantic.VERSION)"
-python -c "from models.asset import Asset; print('models OK')"
 
 if errorlevel 1 (
     echo.
-    echo ERROR: Verification failed!
-    echo There may be an issue with the code files.
+    echo ERROR: Basic imports failed!
+    pause
+    exit /b 1
+)
+
+echo.
+echo Testing models...
+python -c "from models.asset import Asset, AssetType; print('models import OK')"
+
+if errorlevel 1 (
+    echo.
+    echo ERROR: Model import failed!
+    echo.
+    echo This might be a code issue. Check the error above.
     pause
     exit /b 1
 )
@@ -137,6 +120,9 @@ echo ========================================
 echo Installation Complete!
 echo ========================================
 echo.
+echo Installed versions:
+pip list | findstr "fastapi pydantic uvicorn"
+echo.
 echo Now run configuration:
 echo   python configure.py
 echo.
@@ -145,19 +131,3 @@ echo   python main.py
 echo.
 pause
 exit /b 0
-
-:install_failed
-echo.
-echo ========================================
-echo ERROR: Installation failed!
-echo ========================================
-echo.
-echo The package installation failed.
-echo.
-echo Try these solutions:
-echo 1. Run: fix-zscaler.bat (if using ZScaler)
-echo 2. Disable antivirus temporarily
-echo 3. Run Command Prompt as Administrator
-echo.
-pause
-exit /b 1
