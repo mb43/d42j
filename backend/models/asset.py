@@ -4,11 +4,7 @@ Data models for infrastructure assets.
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel
-try:
-    from pydantic import Field
-except ImportError:
-    Field = None  # pydantic v1 compatibility
+from pydantic import BaseModel, validator
 
 
 class AssetType(str, Enum):
@@ -60,7 +56,7 @@ class Asset(BaseModel):
     # Risk assessment fields
     risk_score: float = 0.0
     risk_level: RiskLevel = RiskLevel.LOW
-    risk_factors: Dict[str, Any] = {}
+    risk_factors: Optional[Dict[str, Any]] = None
 
     # Support and lifecycle
     support_status: SupportStatus = SupportStatus.UNKNOWN
@@ -79,20 +75,28 @@ class Asset(BaseModel):
     device42_url: Optional[str] = None
 
     # Additional metadata
-    tags: List[str] = []
-    custom_fields: Dict[str, Any] = {}
-    last_updated: datetime = None
+    tags: Optional[List[str]] = None
+    custom_fields: Optional[Dict[str, Any]] = None
+    last_updated: Optional[datetime] = None
 
-    def __init__(self, **data):
-        if 'last_updated' not in data or data['last_updated'] is None:
-            data['last_updated'] = datetime.utcnow()
-        if 'risk_factors' not in data:
-            data['risk_factors'] = {}
-        if 'tags' not in data:
-            data['tags'] = []
-        if 'custom_fields' not in data:
-            data['custom_fields'] = {}
-        super().__init__(**data)
+    @validator('risk_factors', pre=True, always=True)
+    def set_risk_factors(cls, v):
+        return v or {}
+
+    @validator('tags', pre=True, always=True)
+    def set_tags(cls, v):
+        return v or []
+
+    @validator('custom_fields', pre=True, always=True)
+    def set_custom_fields(cls, v):
+        return v or {}
+
+    @validator('last_updated', pre=True, always=True)
+    def set_last_updated(cls, v):
+        return v or datetime.utcnow()
+
+    class Config:
+        use_enum_values = True
 
 
 class NetworkDevice(Asset):
@@ -130,21 +134,26 @@ class RiskAssessment(BaseModel):
     risk_level: RiskLevel
     factors: Dict[str, float]
     recommendations: List[str]
-    assessed_at: datetime = None
+    assessed_at: Optional[datetime] = None
 
-    def __init__(self, **data):
-        if 'assessed_at' not in data or data['assessed_at'] is None:
-            data['assessed_at'] = datetime.utcnow()
-        super().__init__(**data)
+    @validator('assessed_at', pre=True, always=True)
+    def set_assessed_at(cls, v):
+        return v or datetime.utcnow()
+
+    class Config:
+        use_enum_values = True
 
 
 class AssetSummary(BaseModel):
     """Summary statistics for assets."""
     total_assets: int
-    by_type: Dict[AssetType, int]
-    by_risk_level: Dict[RiskLevel, int]
+    by_type: Dict[str, int]
+    by_risk_level: Dict[str, int]
     avg_age_years: float
     expired_support_count: int
     critical_risk_count: int
     jira_matched_count: int
     jira_unmatched_count: int
+
+    class Config:
+        use_enum_values = True
